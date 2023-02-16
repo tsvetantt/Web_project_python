@@ -58,10 +58,12 @@ def index(request):
 def upload(request):
     if request.method == "POST":
         user = request.user.username
+        user_object = User.objects.get(username=request.user.username) #we get the curent user
+        profile_img = Profile.objects.get(user=user_object).profile_img
         image = request.FILES.get('image_upload')
         caption = request.POST['caption']
 
-        new_post = Post.objects.create(user=user, image=image, caption=caption)
+        new_post = Post.objects.create(profile_img=profile_img, user=user, image=image, caption=caption)
         new_post.save()
 
         return redirect('/')
