@@ -40,17 +40,17 @@
                             {% csrf_token %}
                         <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
                             <div class="col-span-2"></div>
-                               <label for=""> Profile picture</label>
+                               <label for=""> Profile picture: </label>
                                <img width="150" height="150" src="{{user_profile.profile_img.url}}" />
                                <input type="file" name="image" value="" class="shadow-none bg-gray-100">
                            </div>
                            
                             <div class="col-span-2">
-                                <label for="about">BuzzQuote</label>  
+                                <label for="about">BuzzQuote: </label>  
                                 <textarea id="about" name="bio" rows="3"  class="shadow-none bg-gray-100">{{user_profile.bio}}</textarea>
                             </div> 
                             <div class="col-span-2">
-                                <label for=""> Location</label>
+                                <label for=""> Location: </label>
                                 <input type="text" name="location" value="{{user_profile.location}}" class="shadow-none bg-gray-100">
                             </div>
                            

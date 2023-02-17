@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from itertools import chain
 from .models import Profile, Post, LikePost, FollowersCount
 import random
+from operator import itemgetter
 # Create your views here.
 
 
@@ -34,6 +35,7 @@ def index(request):
     for user in user_following:
         user_list = User.objects.get(username = user.user)
         user_following_all.append(user_list)
+        
     
     new_suggestions_list = [x for x in list(all_users) if (x not in list(user_following_all))]
     current_user = User.objects.filter(username = request.user.username)
@@ -52,7 +54,21 @@ def index(request):
 
     suggestions_username_profile_list = list(chain(*username_profile_list))
 
-    return render(request, 'index.html', {'user_profile': user_profile, 'posts': feed_list, 'suggestions_username_profile_list': suggestions_username_profile_list[:4]})
+    leader_board_list = list(Profile.objects.all())
+    leader_board = []
+    for pesrson in leader_board_list:
+        persons_posts = list(Post.objects.filter(user = pesrson.user))
+        sum = 0
+        for post in persons_posts:
+            sum += post.num_of_likes
+        leader_board.append([pesrson,sum])
+
+    leader_board = sorted(leader_board, key=itemgetter(1), reverse=True)
+
+
+    return render(request, 'index.html', {'user_profile': user_profile, 'posts': feed_list,
+                'suggestions_username_profile_list': suggestions_username_profile_list[:4],
+                'leader_board': leader_board})
 
 @login_required(login_url='signin')
 def upload(request):
@@ -107,7 +123,6 @@ def like_post(request):
         new_like.save()
         post.num_of_likes += 1 
         post.save()
-
         return redirect('/')
     else:
         like_filter.delete()
