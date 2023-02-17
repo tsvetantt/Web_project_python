@@ -101,9 +101,13 @@
 											<a class="strip" href="{{post.image.url}}" title="" data-strip-group="mygroup" data-strip-group-options="loop: false">
 												<img src="{{post.image.url}}" style="height: 250px; width: 300px;" alt=""></a>
 											<textarea>{{post.caption}}</textarea>
-											<form method="POST" action="/delete/{{post.id}}/">
+											<form method="POST" action="/delete_post">
 												{% csrf_token %}
+												{% if user_object.username == user.username %}
+												<input type="hidden" value="{{user_object.username}}" name="user" />
+												<input type="hidden" value="{{post.id}}" name="post_id" />
 												<input type="submit" value="Delete">
+												{% endif %}
 											</form>
 										</li>
 										{% endfor %}

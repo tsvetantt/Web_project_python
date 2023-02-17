@@ -116,6 +116,15 @@ def like_post(request):
         return redirect('/')
 
 @login_required(login_url='signin')
+def delete_post(request):
+    user = request.POST['user']
+    post_id = request.POST['post_id']
+
+    post_object = Post.objects.get(id = post_id)
+    post_object.delete()
+    return redirect('/profile/' + user)
+
+@login_required(login_url='signin')
 def profile(request, pk):
     user_object = User.objects.get(username = pk)
     user_profile = Profile.objects.get(user=user_object)
