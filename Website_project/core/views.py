@@ -11,19 +11,19 @@ import random
 
 @login_required(login_url='signin')
 def index(request):
-    user_object = User.objects.get(username=request.user.username) #we get the curent user
-    user_profile = Profile.objects.get(user=user_object) #we get his profil
+    user_object = User.objects.get(username = request.user.username) #we get the curent user
+    user_profile = Profile.objects.get(user = user_object) #we get his profil
 
     user_following_list = []
     feed = []
 
-    user_following = FollowersCount.objects.filter(follower=request.user.username)
+    user_following = FollowersCount.objects.filter(follower = request.user.username)
 
     for users in user_following:
         user_following_list.append(users.user)
 
     for usernames in user_following_list:
-        feed_lists = Post.objects.filter(user=usernames)
+        feed_lists = Post.objects.filter(user = usernames)
         feed.append(feed_lists)
 
     feed_list = list(chain(*feed)) 
@@ -32,11 +32,11 @@ def index(request):
     user_following_all = []
 
     for user in user_following:
-        user_list = User.objects.get(username=user.user)
+        user_list = User.objects.get(username = user.user)
         user_following_all.append(user_list)
     
     new_suggestions_list = [x for x in list(all_users) if (x not in list(user_following_all))]
-    current_user = User.objects.filter(username=request.user.username)
+    current_user = User.objects.filter(username = request.user.username)
     final_suggestions_list = [x for x in list(new_suggestions_list) if ( x not in list(current_user))]
     random.shuffle(final_suggestions_list)
 
@@ -58,12 +58,12 @@ def index(request):
 def upload(request):
     if request.method == "POST":
         user = request.user.username
-        user_object = User.objects.get(username=request.user.username) #we get the curent user
-        profile_img = Profile.objects.get(user=user_object).profile_img
+        user_object = User.objects.get(username = request.user.username) #we get the curent user
+        profile_img = Profile.objects.get(user = user_object).profile_img
         image = request.FILES.get('image_upload')
         caption = request.POST['caption']
 
-        new_post = Post.objects.create(profile_img=profile_img, user=user, image=image, caption=caption)
+        new_post = Post.objects.create(profile_img = profile_img, user = user, image = image, caption = caption)
         new_post.save()
 
         return redirect('/')
@@ -73,12 +73,12 @@ def upload(request):
 
 @login_required(login_url='signin')
 def search(request):
-    user_object = User.objects.get(username=request.user.username)
-    user_profile = Profile.objects.get(user=user_object)
+    user_object = User.objects.get(username = request.user.username)
+    user_profile = Profile.objects.get(user = user_object)
 
     if request.method == 'POST':
         username = request.POST['username']
-        username_object = User.objects.filter(username__icontains=username)
+        username_object = User.objects.filter(username__icontains = username)
 
         username_profile = []
         username_profile_list = []
@@ -127,20 +127,20 @@ def delete_post(request):
 @login_required(login_url='signin')
 def profile(request, pk):
     user_object = User.objects.get(username = pk)
-    user_profile = Profile.objects.get(user=user_object)
-    user_posts = Post.objects.filter(user=pk)
+    user_profile = Profile.objects.get(user = user_object)
+    user_posts = Post.objects.filter(user = pk)
     user_post_length = len(user_posts)
 
     follower = request.user.username
     user = pk
 
-    if FollowersCount.objects.filter(follower=follower, user=user).first():
+    if FollowersCount.objects.filter(follower=follower, user = user).first():
         button_text = "Unfollow"
     else:
         button_text = "Follow"
 
-    user_followers = len(FollowersCount.objects.filter(user=pk))
-    user_following = len(FollowersCount.objects.filter(follower=pk))
+    user_followers = len(FollowersCount.objects.filter(user = pk))
+    user_following = len(FollowersCount.objects.filter(follower = pk))
 
 
     context = {
@@ -160,12 +160,12 @@ def follow(request):
         follower = request.POST['follower']
         user = request.POST['user']
         
-        if FollowersCount.objects.filter(follower=follower, user=user).first():
-            delete_follower = FollowersCount.objects.get(follower=follower, user=user)
+        if FollowersCount.objects.filter(follower = follower, user = user).first():
+            delete_follower = FollowersCount.objects.get(follower = follower, user = user)
             delete_follower.delete()
             return redirect('/profile/' + user)
         else:
-            new_follower = FollowersCount.objects.create(follower=follower, user=user)
+            new_follower = FollowersCount.objects.create(follower = follower, user = user)
             new_follower.save()
             return redirect('/profile/' + user)
     else:
@@ -180,21 +180,21 @@ def signup(request):
         password2 = request.POST['password2']
 
         if password == password2:
-            if User.objects.filter(email=email).exists():
+            if User.objects.filter(email = email).exists():
                 messages.info(request, 'Email already exists!')
                 return redirect('signup')
-            elif User.objects.filter(username=username).exists():
+            elif User.objects.filter(username = username).exists():
                 messages.info(request, 'Username is already taken!')
                 return redirect('signup')
             else:
-                user = User.objects.create_user(username=username, email=email, password=password)
+                user = User.objects.create_user(username = username, email = email, password = password)
                 user.save()
 
-                user_login = auth.authenticate(username=username, password=password)
+                user_login = auth.authenticate(username = username, password = password)
                 auth.login(request, user_login)
 
-                user_model = User.objects.get(username=username)
-                new_profile = Profile.objects.create(user=user_model, id_user=user_model.id)
+                user_model = User.objects.get(username = username)
+                new_profile = Profile.objects.create(user = user_model, id_user = user_model.id)
                 new_profile.save()
                 return redirect('signup')
         else:
@@ -208,7 +208,7 @@ def signup(request):
     
 @login_required(login_url='signin')
 def settings(request):
-    user_profile=Profile.objects.get(user=request.user)
+    user_profile=Profile.objects.get(user = request.user)
 
     if request.method == "POST":
         if request.FILES.get('image') == None:
@@ -241,7 +241,7 @@ def signin(request):
         username = request.POST['username']
         password = request.POST['password']
 
-        user = auth.authenticate(username=username, password=password)
+        user = auth.authenticate(username = username, password = password)
 
         if user is not None:
             auth.login(request, user)
